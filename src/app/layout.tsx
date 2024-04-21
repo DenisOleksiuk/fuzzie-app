@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/providers/theme-provider';
 
 import './globals.css';
 import ModalProvider from '@/providers/modal-provider';
+import { Toaster } from '@/components/ui/toaster';
 
 const font = DM_Sans({ subsets: ['latin'] });
 
@@ -29,7 +30,10 @@ export default function RootLayout({
                         enableSystem={true}
                         disableTransitionOnChange
                     >
-                        <ModalProvider>{children}</ModalProvider>
+                        <ModalProvider>
+                            {children}
+                            <Toaster />
+                        </ModalProvider>
                     </ThemeProvider>
                 </body>
             </html>
