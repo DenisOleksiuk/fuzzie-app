@@ -8,7 +8,7 @@ import React, { useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { CONNECTIONS, EditorCanvasDefaultCardTypes } from '@/lib/constant';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-// import { fetchBotSlackChannels, onConnections, onDragStart } from '@/lib/editor-utils';
+import { fetchBotSlackChannels, onConnections, onDragStart } from '@/lib/editor-utils';
 import EditorCanvasIconHelper from './editor-canvas-card-icon-hepler';
 import {
     Accordion,
@@ -54,7 +54,7 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
                 <TabsContent value="actions" className="flex flex-col gap-4 p-4">
                     {Object.entries(EditorCanvasDefaultCardTypes)
                         .filter(
-                            ([_, cardType]) =>
+                            ([, cardType]) =>
                                 (!nodes.length && cardType.type === 'Trigger') ||
                                 (nodes.length && cardType.type === 'Action')
                         )
@@ -63,9 +63,9 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
                                 key={cardKey}
                                 draggable
                                 className="w-full cursor-grab border-black bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-900"
-                                // onDragStart={(event) =>
-                                //     onDragStart(event, cardKey as EditorCanvasTypes)
-                                // }
+                                onDragStart={(event) =>
+                                    onDragStart(event, cardKey as EditorCanvasTypes)
+                                }
                             >
                                 <CardHeader className="flex flex-row items-center gap-4 p-4">
                                     <EditorCanvasIconHelper
