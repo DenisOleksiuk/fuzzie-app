@@ -10,7 +10,6 @@ import {
     getSlackConnection,
     listBotChannels
 } from '@/app/(main)/(pages)/connections/_actions/slack-connection';
-import { Option } from '@/components/ui/multiple-selector';
 
 export const onDragStart = (event: any, nodeType: EditorCanvasCardType['type']) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -114,7 +113,7 @@ export const onConnections = async (
             });
 
             if (nodeConnection.notionNode.databaseId !== '') {
-                const response = await getNotionDatabase(
+                await getNotionDatabase(
                     nodeConnection.notionNode.databaseId,
                     nodeConnection.notionNode.accessToken
                 );
@@ -141,7 +140,7 @@ export const onConnections = async (
 
 export const fetchBotSlackChannels = async (
     token: string,
-    setSlackChannels: (slackChannels: Option[]) => void
+    setSlackChannels: () => void
 ) => {
     await listBotChannels(token)?.then((channels) => setSlackChannels(channels));
 };

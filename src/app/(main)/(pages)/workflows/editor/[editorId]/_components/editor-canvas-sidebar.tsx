@@ -16,6 +16,8 @@ import {
     AccordionItem,
     AccordionTrigger
 } from '@/components/ui/accordion';
+import RenderOutputAccordion from './render-output-accordian';
+import RenderConnectionAccordion from './render-connection-accordion';
 // import RenderConnectionAccordion from './render-connection-accordion';
 // import RenderOutputAccordion from './render-output-accordian';
 // import { useFuzzieStore } from '@/store';
@@ -45,7 +47,7 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
 
     return (
         <aside>
-            <Tabs defaultValue="actions" className="h-screen overflow-scroll pb-24">
+            <Tabs defaultValue="actions" className="h-screen overflow-scroll pb-40">
                 <TabsList className="bg-transparent">
                     <TabsTrigger value="actions">Actions</TabsTrigger>
                     <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -92,25 +94,25 @@ const EditorCanvasSidebar = ({ nodes }: Props) => {
                                 Account
                             </AccordionTrigger>
                             <AccordionContent>
-                                {CONNECTIONS.map(
-                                    (connection) =>
-                                        // <RenderConnectionAccordion
-                                        //     key={connection.title}
-                                        //     state={state}
-                                        //     connection={connection}
-                                        // />
-                                        'RenderConnectionAccordion'
-                                )}
+                                {CONNECTIONS.map((connection) => (
+                                    <RenderConnectionAccordion
+                                        key={connection.title}
+                                        state={state}
+                                        connection={connection}
+                                    />
+                                ))}
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="Expected Output" className="px-2">
                             <AccordionTrigger className="!no-underline">
                                 Action
                             </AccordionTrigger>
-                            {/* <RenderOutputAccordion
-                                state={state}
-                                nodeConnection={nodeConnection}
-                            /> */}
+                            <AccordionContent>
+                                <RenderOutputAccordion
+                                    state={state}
+                                    nodeConnection={nodeConnection}
+                                />
+                            </AccordionContent>
                         </AccordionItem>
                     </Accordion>
                 </TabsContent>
