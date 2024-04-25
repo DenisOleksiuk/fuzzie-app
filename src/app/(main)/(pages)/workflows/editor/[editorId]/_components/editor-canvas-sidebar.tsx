@@ -18,9 +18,7 @@ import {
 } from '@/components/ui/accordion';
 import RenderOutputAccordion from './render-output-accordian';
 import RenderConnectionAccordion from './render-connection-accordion';
-// import RenderConnectionAccordion from './render-connection-accordion';
-// import RenderOutputAccordion from './render-output-accordian';
-// import { useFuzzieStore } from '@/store';
+import { useFuzzieStore } from '@/store';
 
 type Props = {
     nodes: EditorNodeType[];
@@ -29,19 +27,20 @@ type Props = {
 const EditorCanvasSidebar = ({ nodes }: Props) => {
     const { state } = useEditor();
     const { nodeConnection } = useNodeConnections();
-    // const { googleFile, setSlackChannels } = useFuzzieStore();
+    const { googleFile, setSlackChannels } = useFuzzieStore();
+
     useEffect(() => {
         if (state) {
-            // onConnections(nodeConnection, state, googleFile);
+            onConnections(nodeConnection, state, googleFile);
         }
     }, [state]);
 
     useEffect(() => {
         if (nodeConnection.slackNode.slackAccessToken) {
-            // fetchBotSlackChannels(
-            //     nodeConnection.slackNode.slackAccessToken,
-            //     setSlackChannels
-            // );
+            fetchBotSlackChannels(
+                nodeConnection.slackNode.slackAccessToken,
+                setSlackChannels
+            );
         }
     }, [nodeConnection]);
 

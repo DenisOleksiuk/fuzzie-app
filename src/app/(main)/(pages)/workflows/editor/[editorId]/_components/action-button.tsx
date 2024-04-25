@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Option } from './content-based-on-title';
 import { ConnectionProviderProps } from '@/providers/connections-provider';
 import { usePathname } from 'next/navigation';
@@ -75,90 +75,85 @@ const ActionButton = ({
         }
     }, [nodeConnection.slackNode, channels]);
 
-    const onCreateLocalNodeTempate = useCallback(async () => {
-        if (currentService === 'Discord') {
-            const response = await onCreateNodeTemplate(
-                nodeConnection.discordNode.content,
-                currentService,
-                pathname.split('/').pop()!
-            );
-
-            if (response) {
-                toast.message(response);
+    const serviceMap = useMemo(
+        () => ({
+            Discord: {
+                content: nodeConnection.discordNode.content,
+                accessToken: undefined,
+                databaseId: undefined,
+                channels: undefined
+            },
+            Notion: {
+                content: JSON.stringify(nodeConnection.notionNode.content),
+                accessToken: nodeConnection.notionNode.accessToken,
+                databaseId: nodeConnection.notionNode.databaseId,
+                channels: undefined
+            },
+            Slack: {
+                content: nodeConnection.slackNode.content,
+                accessToken: nodeConnection.slackNode.slackAccessToken,
+                databaseId: undefined,
+                channels: channels
             }
-        }
-        if (currentService === 'Slack') {
-            const response = await onCreateNodeTemplate(
-                nodeConnection.slackNode.content,
-                currentService,
-                pathname.split('/').pop()!,
-                channels,
-                nodeConnection.slackNode.slackAccessToken
-            );
+        }),
+        [channels, nodeConnection]
+    );
 
-            if (response) {
-                toast.message(response);
-            }
+    const onCreateLocalNodeTemplate = useCallback(async () => {
+        const service = serviceMap[currentService];
+
+        if (!service) {
+            return;
         }
 
-        if (currentService === 'Notion') {
-            const response = await onCreateNodeTemplate(
-                JSON.stringify(nodeConnection.notionNode.content),
-                currentService,
-                pathname.split('/').pop()!,
-                [],
-                nodeConnection.notionNode.accessToken,
-                nodeConnection.notionNode.databaseId
-            );
+        const response = await onCreateNodeTemplate(
+            service.content,
+            currentService,
+            pathname.split('/').pop()!,
+            service.channels,
+            service.accessToken,
+            service.databaseId
+        );
 
-            if (response) {
-                toast.message(response);
-            }
+        if (response) {
+            toast.message(response);
         }
-    }, [nodeConnection, channels]);
+    }, [currentService, pathname, serviceMap]);
 
-    const renderActionButton = () => {
-        switch (currentService) {
-            case 'Discord':
-                return (
-                    <>
-                        <Button variant="outline" onClick={onSendDiscordMessage}>
-                            Test Message
-                        </Button>
-                        <Button onClick={onCreateLocalNodeTempate} variant="outline">
-                            Save Template
-                        </Button>
-                    </>
-                );
-
-            case 'Notion':
-                return (
-                    <>
-                        <Button variant="outline" onClick={onStoreNotionContent}>
-                            Test
-                        </Button>
-                        <Button onClick={onCreateLocalNodeTempate} variant="outline">
-                            Save Template
-                        </Button>
-                    </>
-                );
-
-            case 'Slack':
-                return (
-                    <>
-                        <Button variant="outline" onClick={onStoreSlackContent}>
-                            Send Message
-                        </Button>
-                        <Button onClick={onCreateLocalNodeTempate} variant="outline">
-                            Save Template
-                        </Button>
-                    </>
-                );
-
-            default:
-                return null;
+    const actionButtonMap = {
+        Discord: {
+            action: onSendDiscordMessage,
+            label: 'Test Message'
+        },
+        Notion: {
+            action: onStoreNotionContent,
+            label: 'Test'
+        },
+        Slack: {
+            action: onStoreSlackContent,
+            label: 'Send Message'
         }
     };
+
+    const renderActionButton = () => {
+        const actionButton = actionButtonMap[currentService];
+
+        if (!actionButton) {
+            return null;
+        }
+
+        return (
+            <>
+                <Button variant="outline" onClick={actionButton.action}>
+                    {actionButton.label}
+                </Button>
+                <Button variant="outline" onClick={onCreateLocalNodeTemplate}>
+                    Save Template
+                </Button>
+            </>
+        );
+    };
+
     return renderActionButton();
 };
 
